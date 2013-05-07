@@ -1,0 +1,224 @@
+alankomaat	the netherlands
+alemanha	germany
+alemania	germany
+allemagne	germany
+andorra	andorra
+andorre	andorra
+armenia	armenia
+austria	austria
+áustria	austria
+autriche	austria
+belarus	belarus
+bélgica	belgium
+belgië	belgium
+belgien	belgium
+belgio	belgium
+belgique	belgium
+belgium	belgium
+brasil	brazil
+brasil	brazil
+brasil	brazil
+bulgaria	bulgaria
+canada	canada
+ceská republika	czech republic
+chile	chile
+china	china
+cidade do vaticano	vatican city
+città del vaticano	vatican city
+czech republic	czech republic
+danemark	denmark
+dänemark	denmark
+danimarca	denmark
+danmark	denmark
+denemarken	denmark
+denmark	denmark
+deutschland	germany
+dinamarca	denmark
+duitsland	germany
+eesti	estonia
+espagne	spain
+espainia	spain
+españa	spain
+espanha	spain
+espanja	spain
+espanya	spain
+estland	estonia
+estonia	estonia
+estónia	estonia
+estonie	estonia
+finlande	finland
+finland	finland
+finlandia	finland
+finlândia	finland
+finnland	finland
+frança	france
+france	france
+francia	france
+frankreich	france
+frankrig	france
+frankrijk	france
+frankrike	france
+georgia	georgia
+germania	germany
+germany	germany
+gibraltar	gibraltar
+grèce	greece
+grecia	greece
+grécia	greece
+greece	greece
+grekland	greece
+griechenland	greece
+griekenland	greece
+holanda países baixos	the netherlands
+holanda	the netherlands
+hongarije	hungary
+hongrie	hungary
+hungary	hungary
+hungria	hungary
+hungría	hungary
+iceland	iceland
+ierland	ireland
+indonesia	indonesia
+indonésia	indonesia
+indonésie	indonesia
+indonesië	indonesia
+indonesien	indonesia
+ireland	ireland
+irlanda	ireland
+irlande	ireland
+irland	ireland
+italia	italy
+itália	italy
+italie	italy
+italië	italy
+italien	italy
+italy	italy
+japan	japan
+kosovo	kosovo
+latvia	latvia
+latvija	latvia
+letland	latvia
+letonia	latvia
+letónia	latvia
+lettland	latvia
+lettonie	latvia
+liechtenstein	liechtenstein
+lietuva	lithuania
+lithuania	lithuania
+luxembourg	luxembourg
+luxemburgo	luxembourg
+macedonia the former yugoslav republic of	macedonia
+magyarország	hungary
+malaisie	malaysia
+malasia	malaysia
+malásia	malaysia
+malaysia	malaysia
+maleisië	malaysia
+malesia	malaysia
+marocco	morocco
+marokko	morocco
+marruecos	morocco
+meksiko	mexico
+messico	mexico
+mexico	mexico
+méxico	mexico
+mexiko	mexico
+mexique	mexico
+monaco	monaco
+morocco	morocco
+nederländerna	the netherlands
+nederland	the netherlands
+netherlands	the netherlands
+niederlande	the netherlands
+noorwegen	norway
+norge	norway
+noruega	norway
+norvège	norway
+norvegia	norway
+norway	norway
+norwegen	norway
+oostenrijk	austria
+österreich	austria
+österrike	austria
+østerrike	austria
+paesi bassi	the netherlands
+pays bas	the netherlands
+poland	poland
+polen	poland
+pologne	poland
+polonia	poland
+polónia	poland
+polska	poland
+portogallo	portugal
+portugali	portugal
+portugal	portugal
+ranska	france
+regno unito	united kingdom
+reino unido	united kingdom
+royaume uni	united kingdom
+ruotsi	sweden
+rusia	russia
+rusland	russia
+russia	russia
+rússia	russia
+russie	russia
+russland	russia
+saksa	germany
+san marino	san marino
+schweden	sweden
+schweiz	switzerland
+serbia	serbia
+singapore	singapore
+slovakia	slovakia
+slovensko	slovakia
+south africa	south africa
+spagna	spain
+spain	spain
+spania	spain
+spanien	spain
+spanje	spain
+storbritannia	united kingdom
+storbritannien	united kingdom
+suecia	sweden
+suécia	sweden
+suède	sweden
+suíça	switzerland
+suisse	switzerland
+suiza	switzerland
+suomi	finland
+sveitsi	switzerland
+sverige	sweden
+svezia	sweden
+svizzera	switzerland
+sweden	sweden
+switzerland	switzerland
+the netherlands	the netherlands
+the united states of america	united states
+turchia	turkey
+türkei	turkey
+turkey	turkey
+turkiet	turkey
+turkije	turkey
+türkiye	turkey
+turquia	turkey
+turquía	turkey
+turquie	turkey
+tyrkiet	turkey
+tyskland	germany
+ukraine	ukraine
+ungarn	hungary
+ungheria	hungary
+united kingdom	united kingdom
+united states	united states
+vatican city	vatican city
+venäjä	russia
+vereinigtes königreich	united kingdom
+verenigd koninkrijk	united kingdom
+viro	estonia
+yhdistynyt kuningaskunta	united kingdom
+zweden	sweden
+zwitserland	switzerland
+Ελλάδα	greece
+Ελλάς	greece
+България	bulgaria
+Россия	russia

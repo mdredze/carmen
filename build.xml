@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="carmen">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+	<property name="build-dir" value="build"/>
+	<property name="dist-dir" value="dist"/>
+	
+    <path id="carmen.classpath">
+        <pathelement location="${build-dir}"/>
+        <pathelement location="lib/log4j-1.2.17.jar"/>
+        <pathelement location="lib/simplelatlng-1.0.1.jar"/>
+        <pathelement location="lib/jackson-core-2.1.4.jar"/>
+        <pathelement location="lib/jackson-annotations-2.2.0.jar"/>
+        <pathelement location="lib/jackson-databind-2.1.0.jar"/>
+        <pathelement location="lib/commons-cli-1.2.jar"/>
+    </path>
+    <path id="resources.classpath">
+		<pathelement location="src/resources"/>
+    </path>
+    <target name="init">
+        <mkdir dir="${build-dir}"/>
+        <copy includeemptydirs="false" todir="${build-dir}">
+            <fileset dir="src/java">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="${build-dir}"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="init" name="build">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${build-dir}" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src/java"/>
+            <classpath refid="carmen.classpath"/>
+        </javac>
+    </target>
+	<target name="jar">
+		<jar destfile="${dist-dir}/carmen.jar" basedir="${build-dir}">
+		</jar>
+	</target>
+	
+	<target name="run-demo" depends="build" description="Run the demo.">
+	  <java classname="carmen.demo.LocationResolverDemo">
+    	<arg line="${args}"/>
+    	<classpath refid="carmen.classpath"/>
+    	<classpath refid="resources.classpath"/>
+	  </java>
+	</target>
+
+	<target name="run-stats-demo" depends="build" description="Run the stats demo.">
+	  <java classname="carmen.demo.LocationResolverStatsDemo">
+    	<arg line="${args}"/>
+    	<classpath refid="carmen.classpath"/>
+    	<classpath refid="resources.classpath"/>
+	  </java>
+	</target>
+
+
+</project>
