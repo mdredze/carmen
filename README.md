@@ -29,12 +29,18 @@ to absolute paths as needed.
 To run a demo:
 ant run-demo -Dargs='--input_file input.json'
 
+You can provide a second argument to output the tweets with geolocation information to a file.
+
+ant run-demo -Dargs='--input_file input.json --output_file output.json'
+
 To run the experiments described in the Carmen paper (below).
 ant run-stats-demo -Dargs='--input_file input.json --output_file output.json'
 
 input.json and output.json are both json files. input.json should contain tweets in json
 format, one per line. Twitter data is not distributed with Carmen. These files will be treated
 a gzip files if the have suffix ".gz"
+
+
 
 ----------------------------------------------------------------------
 Dependencies:

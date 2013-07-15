@@ -3,8 +3,11 @@
 // Mark Dredze, mdredze@cs.jhu.edu
 package carmen.demo;
 
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -40,12 +43,21 @@ public class LocationResolverDemo {
 
 		// Get options
 		String inputFile = CommandLineUtilities.getOptionValue("input_file");
+		String outputFile = null;
+		if (CommandLineUtilities.hasArg("output_file")) {
+			outputFile = CommandLineUtilities.getOptionValue("output_file");
+		}
 		
 		logger.info("Creating LocationResolver.");
 		LocationResolver resolver = LocationResolver.getLocationResolver();
 
 		Scanner scanner = Utils.createScanner(inputFile);
 	
+		Writer writer = null;
+		if (outputFile != null) {
+			writer = Utils.createWriter(outputFile);
+			logger.info("Saving geolocated tweets to: " + outputFile);
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		int numResolved = 0;
 		int total = 0;
@@ -61,13 +73,23 @@ public class LocationResolverDemo {
 				logger.debug("Found location: " + location.toString());
 				numResolved++;
 			}
+			if (writer != null) {
+				if (location != null) {
+					tweet.put("location", Location.createJsonFromLocation(location));
+				}
+				mapper.writeValue(writer, tweet);
+				writer.write("\n");
+			}
+				
 		}
 		scanner.close();
+		writer.close();
 
 		logger.info("Resolved locations for " + numResolved + " of " + total + " tweets.");
 	}
 	
 	private static void createCommandLineOptions() {
-		Utils.registerOption(options, "input_file", "StringList", true, "A file containing the tweets to locate with geolocation field.");
+		Utils.registerOption(options, "input_file", "String", true, "A file containing the tweets to locate with geolocation field.");
+		Utils.registerOption(options, "output_file", "String", true, "A file to write geolocated tweets.");
 	}
 }
