@@ -55,6 +55,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * use_geocodes: attempt to resolve based on the tweet's coordinates field.
  * use_user_string: attempt to resolve based on the tweet's user profile's location field.
  * use_unknown_places: return places even if they are not in the database.
+ * use_known_parent_for_unknown_places: if use_unknown_places is false, then this option will try to find a known parent for a location. If a known parent is found, and no location is found using another method, the parent is used. 
  * 
  * The LocationResolver relies on resources specified in carmen.properties.
  * 
@@ -79,6 +80,7 @@ public class LocationResolver {
 	private boolean usePlace;
 	private boolean useGeocodes;
 	private boolean useUserString;
+	private boolean useKnownParentForUnknownPlaces;
 	private GeocodeLocationResolver geocodeLocationResolver;
 	private boolean useUnknownPlaces = true; // If true, return twitter place objects even when unknown in the database.
 	private int newLocationIndex = Constants.NEW_LOCATION_STARTING_INDEX;
@@ -86,11 +88,13 @@ public class LocationResolver {
 	private Pattern statePattern = Pattern.compile(".+,\\s*(\\w+)");
 
 	private HashMap<String, String> placeNameToNormalizedPlaceName = new HashMap<String,String>();
-	private HashMap<Integer, Location> idToLocation = new HashMap<Integer, Location>();
 	private HashMap<String, Location> locationNameToLocation = new HashMap<String, Location>();
 	private HashMap<Location, Location> locationToParent = new HashMap<Location,Location>();
 	private HashMap<Location, List<Location>> locationToChildren = new HashMap<Location,List<Location>>();
+	private HashMap<Integer, Location> idToLocation = new HashMap<Integer, Location>();
 	private HashMap<Location, Integer> locationToId = new HashMap<Location, Integer>();
+
+	
 	
 	public static LocationResolver getLocationResolver() throws IOException {
 		if (resolver == null)
@@ -104,6 +108,7 @@ public class LocationResolver {
 		this.usePlace = CarmenProperties.getBoolean("use_place");
 		this.useGeocodes = CarmenProperties.getBoolean("use_geocodes");
 		this.useUserString = CarmenProperties.getBoolean("use_user_string");
+		this.useKnownParentForUnknownPlaces = CarmenProperties.getBoolean("use_known_parent_for_unknown_places");
 		this.useUnknownPlaces = CarmenProperties.getBoolean("use_unknown_places");
 		
 		logger.info("Geocoding using these resources:");
@@ -127,13 +132,16 @@ public class LocationResolver {
 		}
 		
 		for (Location location : knownLocations) {
-			Location parent = this.createParentOfLocation(location);
+			Location parent = this.idToLocation.get(location.getParentId());
+			//Location parent = this.createParentOfLocation(location);
 			if (parent != null) {
 				this.locationToParent.put(location, parent); 
 				if (!this.locationToChildren.containsKey(parent))
 					this.locationToChildren.put(parent, new LinkedList<Location>());
 				this.locationToChildren.get(parent).add(location);
 				
+				// The parents are now all in the json file, so there is no reason to add them up the pipeline.
+				/*
 				// Add this parent up the entire hierarchy.
 				// Add to the hashs, add to parent children, walk up until null.
 				Location currentLocation = parent;
@@ -148,6 +156,7 @@ public class LocationResolver {
 					currentLocation = parent;
 					parent = this.createParentOfLocation(currentLocation);
 				}
+				*/
 			}
 		}
 		
@@ -168,15 +177,15 @@ public class LocationResolver {
 	}
 	
 	
-	private Location createParentOfLocation(Location location) {
+	private Location createParentOfLocation(Location location, boolean registerLocation) {
 		// If we have a city, backoff to the state.
 		Location parentLocation = null;
 		if (location.getCity() != null)
-			parentLocation =  new Location(location.getCountry(), location.getState(), location.getCounty(), null, -1, false);
+			parentLocation =  new Location(location.getCountry(), location.getState(), location.getCounty(), null, -1, -1, false);
 		else if (location.getCounty() != null)
-			parentLocation =  new Location(location.getCountry(), location.getState(), null, null, -1, false);
+			parentLocation =  new Location(location.getCountry(), location.getState(), null, null, -1, -1, false);
 		else if (location.getState() != null)
-			parentLocation =  new Location(location.getCountry(), null, null, null, -1, false);
+			parentLocation =  new Location(location.getCountry(), null, null, null, -1, -1, false);
 		else if (location.getCountry() != null && !location.getCountry().equalsIgnoreCase(Constants.DS_LOCATION_NONE))
 			parentLocation =  Location.getNoneLocation();
 
@@ -189,7 +198,8 @@ public class LocationResolver {
 			return this.idToLocation.get(this.locationToId.get(parentLocation));
 		}
 
-		registerNewLocation(parentLocation);
+		if (registerLocation)
+			registerNewLocation(parentLocation);
 		
 		return parentLocation;
 	}
@@ -227,15 +237,31 @@ public class LocationResolver {
 	
 	public Location resolveLocationFromTweet(Map<String,Object> tweet) {
 		Location location = null;
+		Location provisionalLocation = null;
 		if (this.usePlace) {
 			location = resolveLocationUsingPlace(tweet);
 			
 			if (location != null) {
 				location.setResolutionMethod(ResolutionMethod.PLACE);
-				if (!this.useUnknownPlaces && !location.isKnownLocation())
-					location = null;
-				else if (this.useUnknownPlaces && !location.isKnownLocation())
-					registerNewLocation(location);
+				
+				if (!location.isKnownLocation()) {
+					// The location is not known. Should we use it?
+					if (this.useUnknownPlaces)
+						// Yes, use it. Register a new location.
+						registerNewLocation(location);
+					else if (this.useKnownParentForUnknownPlaces) {
+						// Don't use it, but try to find a known parent.
+						Location parent = this.createParentOfLocation(location, false);
+						while (parent != null && !parent.isKnownLocation()) {
+							parent = this.createParentOfLocation(parent, false);
+						}
+						if (parent != null && parent.isKnownLocation())
+							provisionalLocation = parent;
+						// Try to find a better place using another method before using the parent.
+					} else
+						// We can't find a known location.
+						location = null;
+				}
 			}
 		}
 		if (location == null && this.useGeocodes) {
@@ -249,6 +275,9 @@ public class LocationResolver {
 			if (location != null)
 				location.setResolutionMethod(ResolutionMethod.USER_LOCATION);
 		}
+		
+		if (location == null && provisionalLocation != null)
+			location = provisionalLocation;
 		
 		return location;
 	}
@@ -470,7 +499,7 @@ public class LocationResolver {
 	
 	protected Location getLocationForPlace(String country, String state,
 			String county, String city, String url, String id) {
-		Location location = new Location(country, state, county, city, -1, false);
+		Location location = new Location(country, state, county, city, -1, -1, false);
 		
 		// This we already have a location object, use it.
 		if (this.locationToId.containsKey(location)) {
@@ -493,7 +522,7 @@ public class LocationResolver {
 		this.idToLocation.put(index, location);
 
 		// Put in hierarchy.
-		Location parent = this.createParentOfLocation(location);
+		Location parent = this.createParentOfLocation(location, true);
 		if (parent != null) {
 			this.locationToParent.put(location, parent); 
 			if (!this.locationToChildren.containsKey(parent))

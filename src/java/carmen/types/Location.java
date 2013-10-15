@@ -54,6 +54,7 @@ public class Location {
 	protected String state = null;
 	
 	protected int id = -1;
+	protected int parentId = -1;
 	protected double latitude = 0;
 	protected double longitude = 0;
 	
@@ -64,17 +65,19 @@ public class Location {
 	protected ResolutionMethod resolutionMethod = null;
 	protected boolean knownLocation;
 	
-	public Location(String country, String state, String county, String city, int id, boolean knownLocation) {
+	
+	public Location(String country, String state, String county, String city, int id, int parentId, boolean knownLocation) {
 		this.country = country;
 		this.state = state;
 		this.county = county;
 		this.city = city;
 		this.id = id;
+		this.parentId = parentId;
 		this.knownLocation = knownLocation;
 	}
 	
-	public Location(String country, String state, String county, String city, double latitude, double longitude, int id, boolean knownLocation) {
-		this(country, state, county, city, id, knownLocation);
+	public Location(String country, String state, String county, String city, double latitude, double longitude, int id, int parentId, boolean knownLocation) {
+		this(country, state, county, city, id, parentId, knownLocation);
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
@@ -94,6 +97,10 @@ public class Location {
 	
 	public String getCounty() {
 		return county;
+	}
+	
+	public int getParentId() {
+		return this.parentId;
 	}
 	
 	public boolean equals(Object object) {
@@ -170,7 +177,7 @@ public class Location {
 	}
 	
 	public static Location getNoneLocation() {
-		Location location = new Location(null, null, null, null, -1, true);
+		Location location = new Location(null, null, null, null, -1, -1, true);
 		location.isNone  = true;
 		return location;
 	}
@@ -283,9 +290,9 @@ public class Location {
 		int id = Integer.parseInt((String)locationMap.get("id"));
 		double latitude = Double.parseDouble((String)locationMap.get("latitude"));
 		double longitude = Double.parseDouble((String)locationMap.get("longitude"));
-		
+		int parentId = Integer.parseInt((String)locationMap.get("parent_id"));
 		return new Location(country, state, county, city,
-				latitude, longitude, id, true);
+				latitude, longitude, id, parentId, true);
 	}
 	
 	public static Map<String, Object> createJsonFromLocation(Location location) {

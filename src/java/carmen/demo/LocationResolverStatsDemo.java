@@ -158,7 +158,8 @@ public class LocationResolverStatsDemo {
 				}	
 			}
 			if (output != null) {
-				output.write(tweet.toString());
+				String outputString = mapper.writeValueAsString(tweet);
+				output.write(outputString);
 				output.write("\n");
 			}
 
