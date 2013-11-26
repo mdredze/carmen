@@ -233,10 +233,11 @@ public class Location {
 	 * @throws IOException 
 	 */
 	public boolean containsLocation(Location location) throws IOException, ClassNotFoundException {
-		while (location != null) {
+		while (location != null && !location.isNone()) {
 			if (this.equals(location))
 				return true;
 			location = LocationResolver.getLocationResolver().getParent(location);
+			
 		}
 		return false;
 	}
@@ -288,8 +289,13 @@ public class Location {
 		String county =  Utils.getNullForEmptyString((String)locationMap.get("county"));
 		String city =  Utils.getNullForEmptyString((String)locationMap.get("city"));
 		int id = Integer.parseInt((String)locationMap.get("id"));
-		double latitude = Double.parseDouble((String)locationMap.get("latitude"));
-		double longitude = Double.parseDouble((String)locationMap.get("longitude"));
+		double latitude = 0;
+		double longitude = 0;
+		if (locationMap.containsKey("latitude"))
+			latitude = Double.parseDouble((String)locationMap.get("latitude"));
+		if (locationMap.containsKey("longitude"))
+			longitude = Double.parseDouble((String)locationMap.get("longitude"));
+		
 		int parentId = Integer.parseInt((String)locationMap.get("parent_id"));
 		return new Location(country, state, county, city,
 				latitude, longitude, id, parentId, true);

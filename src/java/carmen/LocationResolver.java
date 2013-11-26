@@ -104,7 +104,7 @@ public class LocationResolver {
 	
 	protected LocationResolver() throws IOException {
 		
-		logger.info("Geolocations based on:");
+		
 		this.usePlace = CarmenProperties.getBoolean("use_place");
 		this.useGeocodes = CarmenProperties.getBoolean("use_geocodes");
 		this.useUserString = CarmenProperties.getBoolean("use_user_string");
@@ -119,7 +119,8 @@ public class LocationResolver {
 		if (this.useUserString)
 			logger.info("user profile");
 		
-		
+		logger.info("useKnownParentForUnknownPlaces: " + useKnownParentForUnknownPlaces);
+		logger.info("useUnknownPlaces: " + useUnknownPlaces);
 		logger.info("Loading location resources.");
 		
 		// Load the location objects.
@@ -252,6 +253,7 @@ public class LocationResolver {
 					else if (this.useKnownParentForUnknownPlaces) {
 						// Don't use it, but try to find a known parent.
 						Location parent = this.createParentOfLocation(location, false);
+						location = null;
 						while (parent != null && !parent.isKnownLocation()) {
 							parent = this.createParentOfLocation(parent, false);
 						}
@@ -447,30 +449,32 @@ public class LocationResolver {
 			this.idToLocation.put(location.getId(), location);
 			this.locationToId.put(location, location.getId());
 			HashSet<String> justAddedAliases = new HashSet<String>();
-			for (String alias : aliases) {
-				if (justAddedAliases.contains(alias))
-					continue;
-				
-				if (this.locationNameToLocation.containsKey(alias))
-					logger.warn("Duplicate location name: " + alias);
-				else
-					this.locationNameToLocation.put(alias, location);
-				justAddedAliases.add(alias);
-				
-				// Add entries without punctuation.
-				String newEntry = alias.replaceAll("\\p{Punct}", " ").replaceAll("\\s+", " ");
-				if (justAddedAliases.contains(newEntry))
-					continue;
-				
-				if (!newEntry.equals(alias)) {
-					if (this.locationNameToLocation.containsKey(newEntry))
-						logger.warn("Duplicate location name: " + newEntry);
+			if (aliases != null) {
+				for (String alias : aliases) {
+					if (justAddedAliases.contains(alias))
+						continue;
+
+					if (this.locationNameToLocation.containsKey(alias))
+						logger.warn("Duplicate location name: " + alias);
 					else
-						this.locationNameToLocation.put(newEntry, location	);
+						this.locationNameToLocation.put(alias, location);
+					justAddedAliases.add(alias);
+
+					// Add entries without punctuation.
+					String newEntry = alias.replaceAll("\\p{Punct}", " ").replaceAll("\\s+", " ");
+					if (justAddedAliases.contains(newEntry))
+						continue;
+
+					if (!newEntry.equals(alias)) {
+						if (this.locationNameToLocation.containsKey(newEntry))
+							logger.warn("Duplicate location name: " + newEntry);
+						else
+							this.locationNameToLocation.put(newEntry, location	);
+					}
+
+					justAddedAliases.add(newEntry);
+
 				}
-				
-				justAddedAliases.add(newEntry);
-				
 			}
 		}
 		inputScanner.close();
