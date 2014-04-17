@@ -83,7 +83,8 @@ public class LocationResolverDemo {
 				
 		}
 		scanner.close();
-		writer.close();
+		if (writer != null)
+			writer.close();
 
 		logger.info("Resolved locations for " + numResolved + " of " + total + " tweets.");
 	}
