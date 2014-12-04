@@ -3,6 +3,8 @@ carmen
 
 Geolocation for Twitter.
 
+A Python version is available here: https://github.com/mdredze/carmen-python
+
 Carmen is a library for geolocating tweets. Given a tweet, Carmen will return
 Location objects that represent a physical location. Carmen uses both
 coordinates and other information in a tweet to make geolocation decisions.
